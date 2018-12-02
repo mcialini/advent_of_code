@@ -6,6 +6,12 @@ const getInput = () => {
   return data.split('\n').filter(Boolean);
 };
 
+/*
+To make sure you didn't miss any, you scan the likely candidate boxes again, counting the number that have an ID containing exactly two of any letter and then separately counting those with exactly three of any letter. You can multiply those two counts together to get a rudimentary checksum and compare it to what your device predicts.
+
+time: O(n*m), where n is the number of strings and m is the length of the string
+space: O(n*c)
+*/
 const partOne = () => {
   const total = getInput().reduce((final, str) => {
     const counts = {};
@@ -25,6 +31,12 @@ const partOne = () => {
   return total.two * total.three;
 };
 
+/*
+The boxes will have IDs which differ by exactly one character at the same position in both strings. What letters are common between the two correct box IDs? 
+
+time: O(n^2)
+space: O(n)
+*/
 const partTwo = () => {
   const getMatchingChars = (a, b) => {
     let match = '';
