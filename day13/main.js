@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 
-const str = (y, x) => `${y},${x}`;
+const str = (x, y) => `${x},${y}`;
 const pos = (p) => p.split(',').map((p1) => parseInt(p1));
 
 let paths = {};
@@ -18,19 +18,19 @@ const createPaths = (filename) => {
       const char = data[y][x];
       if (char === ' ') continue;
       if (char === '<') {
-        paths[str(y, x)] = '-';
-        carts[str(y, x)] = new Cart({ x, y, direction: 'LEFT' });
+        paths[str(x, y)] = '-';
+        carts[str(x, y)] = new Cart({ x, y, direction: 'LEFT' });
       } else if (char === '>') {
-        paths[str(y, x)] = '-';
-        carts[str(y, x)] = new Cart({ x, y, direction: 'RIGHT' });
+        paths[str(x, y)] = '-';
+        carts[str(x, y)] = new Cart({ x, y, direction: 'RIGHT' });
       } else if (char === '^') {
-        paths[str(y, x)] = '|';
-        carts[str(y, x)] = new Cart({ x, y, direction: 'UP' });
+        paths[str(x, y)] = '|';
+        carts[str(x, y)] = new Cart({ x, y, direction: 'UP' });
       } else if (char === 'v') {
-        paths[str(y, x)] = '|';
-        carts[str(y, x)] = new Cart({ x, y, direction: 'DOWN' });
+        paths[str(x, y)] = '|';
+        carts[str(x, y)] = new Cart({ x, y, direction: 'DOWN' });
       } else {
-        paths[str(y, x)] = char;
+        paths[str(x, y)] = char;
       }
     }
   }
@@ -77,12 +77,12 @@ class Cart {
   }
 
   move() {
-    delete carts[str(this.y, this.x)];
+    delete carts[str(this.x, this.y)];
     const { x: newX, y: newY } = moveDirection[this.direction]({ x: this.x, y: this.y });
     this.x = newX;
     this.y = newY;
 
-    const nextPathType = paths[str(this.y, this.x)];
+    const nextPathType = paths[str(this.x, this.y)];
     if (!nextPathType) {
       throw new Error('No road.');
     }
@@ -90,7 +90,7 @@ class Cart {
       throw new Error('Found a crash');
     }
 
-    if (carts[str(this.y, this.x)]) {
+    if (carts[str(this.x, this.y)]) {
       return 'X';
     }
 
@@ -125,7 +125,7 @@ class Cart {
     } else {
       this.direction = takePathFromDirection[nextPathType][this.direction];
     }
-    carts[str(this.y, this.x)] = this;
+    carts[str(this.x, this.y)] = this;
 
     return nextPathType;
   }
@@ -133,8 +133,8 @@ class Cart {
 
 const getSortedCartPositions = () => {
   return Object.keys(carts).sort((p1, p2) => {
-    const [y1, x1] = p1.split(',').map((p) => parseInt(p));
-    const [y2, x2] = p2.split(',').map((p) => parseInt(p));
+    const [x1, y1] = p1.split(',').map((p) => parseInt(p));
+    const [x2, y2] = p2.split(',').map((p) => parseInt(p));
     if (parseInt(y1) < parseInt(y2)) return -1;
     if (parseInt(y1) > parseInt(y2)) return 1;
     if (parseInt(x1) < parseInt(x2)) return -1;
@@ -153,7 +153,7 @@ const partOne = (filename) => {
       const cart = carts[pos];
       const moveResult = cart.move();
       if (moveResult === 'X') {
-        return str(cart.y, cart.x);
+        return str(cart.x, cart.y);
       }
     }
   }
@@ -173,8 +173,8 @@ const partTwo = (filename) => {
       if (!cart) continue;
       const moveResult = cart.move();
       if (moveResult === 'X') {
-        console.log(`crash: ${cart.y}, ${cart.x}`);
-        delete carts[str(cart.y, cart.x)];
+        console.log(`crash: ${cart.x}, ${cart.y}`);
+        delete carts[str(cart.x, cart.y)];
       }
     }
   }
